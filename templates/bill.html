@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Bill #{{ bill.id }}</title>
+</head>
+<body>
+    <h1>Pharmacy Bill</h1>
+    <hr>
+    <p><strong>Bill ID:</strong> {{ bill.id }}</p>
+    <p><strong>Medicine:</strong> {{ bill.medicine }}</p>
+    <p><strong>Quantity:</strong> {{ bill.quantity }}</p>
+    <p><strong>Unit price:</strong> ₹{{ "%.2f"|format(bill.unit_price) }}</p>
+    <h2>Total: ₹{{ "%.2f"|format(bill.total) }}</h2>
+    <button onclick="window.print()">Print Bill</button>
+    <p><a href="/">Back to Pharmacy</a></p>
+</body>
+</html>
