@@ -17,7 +17,7 @@ pipeline {
         stage('Validate Version Branch') {
             steps {
                 script {
-                    def branch = env.BRANCH_NAME ?: 'v1'
+                    def branch = env.BRANCH_NAME ?: 'v2'
 
                     if (!(branch in ['v1', 'v2', 'v3'])) {
                         error("Use the v1, v2 or v3 branch. Current: ${branch}")
