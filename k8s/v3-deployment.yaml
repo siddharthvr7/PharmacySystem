@@ -1,0 +1,42 @@
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pharmacy-v3
+  labels:
+    app: pharmacy-v3
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: pharmacy-v3
+  template:
+    metadata:
+      labels:
+        app: pharmacy-v3
+    spec:
+      containers:
+        - name: pharmacy
+          image: siddharthvr7/pharmacy-system:v3
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 5000
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 5000
+            initialDelaySeconds: 3
+            periodSeconds: 5
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: 5000
+            initialDelaySeconds: 10
+            periodSeconds: 10
+          resources:
+            requests:
+              cpu: 100m
+              memory: 128Mi
+            limits:
+              cpu: 500m
+              memory: 256Mi
