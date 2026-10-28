@@ -10,7 +10,7 @@ pipeline {
         stage('Validate Version Branch') {
             steps {
                 script {
-                    def branch = env.BRANCH_NAME ?: 'main'
+                    def branch = env.BRANCH_NAME ?: 'v1'
 
                     if (!(branch in ['v1', 'v2', 'v3'])) {
                         error("Use the v1, v2 or v3 branch. Current: ${branch}")
@@ -49,7 +49,7 @@ pipeline {
 
                     bat 'docker login -u "%DOCKERHUB_USER%" --password-stdin < nul'
                     bat 'powershell -NoProfile -Command "$env:DOCKERHUB_TOKEN | docker login -u $env:DOCKERHUB_USER --password-stdin"'
-
+                    
                     bat 'docker build -t %IMAGE_NAME% .'
                     bat 'docker push %IMAGE_NAME%'
                     bat 'docker logout'
