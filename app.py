@@ -109,7 +109,7 @@ def view_bill(bill_id):
 
 @app.route("/health")
 def health():
-    return {"status": "healthy", "version": "v1"}, 200
+    return {"status": "healthy", "version": "v3"}, 200
 
 
 if __name__ == "__main__":

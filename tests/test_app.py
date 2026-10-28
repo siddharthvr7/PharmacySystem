@@ -28,7 +28,7 @@ def client():
 def test_health(client):
     response = client.get("/health")
     assert response.status_code == 200
-    assert response.json["version"] == "v1"
+    assert response.json["version"] == "v3"
 
 
 def test_add_medicine(client):
