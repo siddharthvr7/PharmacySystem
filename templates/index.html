@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Pharmacy System v1</title>
+    <title>Pharmacy System v2</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -20,8 +20,9 @@
             padding: 20px;
             margin: 20px 0;
             border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
         }
-        input, button {
+        input, select, button {
             padding: 10px;
             margin: 5px 2px;
         }
@@ -42,14 +43,14 @@
 </head>
 <body>
     <h1>Pharmacy Management System</h1>
-    <p>Version 1 | Medicine Inventory</p>
+    <p>Version 2 | Medicine Inventory &amp; Billing</p>
 
     <section>
         <h2>Add Medicine</h2>
         <form action="/add" method="post">
             <input name="name" placeholder="Medicine name" required>
             <input name="price" type="number" min="0.01" step="0.01"
-                   placeholder="Unit price (₹)" required>
+                   placeholder="Unit price (INR)" required>
             <input name="stock" type="number" min="0"
                    placeholder="Stock quantity" required>
             <button type="submit">Add Item</button>
@@ -62,19 +63,44 @@
         <table>
             <tr>
                 <th>Medicine</th>
-                <th>Price</th>
+                <th>Price (INR)</th>
                 <th>Stock</th>
             </tr>
             {% for name, item in medicines.items() %}
             <tr>
                 <td>{{ name }}</td>
-                <td>₹{{ "%.2f"|format(item.price) }}</td>
+                <td>{{ "%.2f"|format(item.price) }}</td>
                 <td>{{ item.stock }}</td>
             </tr>
             {% endfor %}
         </table>
         {% else %}
         <p>No medicines added yet.</p>
+        {% endif %}
+    </section>
+
+    <section>
+        <h2>Generate Bill</h2>
+        {% if medicines %}
+        <form action="/bill" method="post">
+            <label for="name">Medicine:</label>
+            <select name="name" id="name" required>
+                {% for name, item in medicines.items() %}
+                <option value="{{ name }}" {% if item.stock == 0 %}disabled{% endif %}>
+                    {{ name }} — INR {{ "%.2f"|format(item.price) }}
+                    (Stock: {{ item.stock }})
+                </option>
+                {% endfor %}
+            </select>
+
+            <label for="quantity">Quantity:</label>
+            <input id="quantity" name="quantity" type="number"
+                   min="1" value="1" required>
+
+            <button type="submit">Generate Bill</button>
+        </form>
+        {% else %}
+        <p>Add a medicine before generating a bill.</p>
         {% endif %}
     </section>
 </body>

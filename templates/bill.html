@@ -1,19 +1,67 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Bill #{{ bill.id }}</title>
+    <title>Generated Bill - Pharmacy System V2</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 700px;
+            margin: 40px auto;
+            padding: 20px;
+            background: #f4f6f9;
+            color: #172033;
+        }
+        section {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+        }
+        table { width: 100%; border-collapse: collapse; }
+        th, td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        .total { font-size: 1.2em; font-weight: bold; }
+        a {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 14px;
+            background: #173b70;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+        }
+    </style>
 </head>
 <body>
-    <h1>Pharmacy Bill</h1>
-    <hr>
-    <p><strong>Bill ID:</strong> {{ bill.id }}</p>
-    <p><strong>Medicine:</strong> {{ bill.medicine }}</p>
-    <p><strong>Quantity:</strong> {{ bill.quantity }}</p>
-    <p><strong>Unit price:</strong> ₹{{ "%.2f"|format(bill.unit_price) }}</p>
-    <h2>Total: ₹{{ "%.2f"|format(bill.total) }}</h2>
-    <button onclick="window.print()">Print Bill</button>
-    <p><a href="/">Back to Pharmacy</a></p>
+    <section>
+        <h1>Pharmacy Bill</h1>
+        <p>Bill #{{ bill.id }}</p>
+
+        <table>
+            <tr>
+                <th>Medicine</th>
+                <td>{{ bill.medicine }}</td>
+            </tr>
+            <tr>
+                <th>Unit Price (INR)</th>
+                <td>{{ "%.2f"|format(bill.unit_price) }}</td>
+            </tr>
+            <tr>
+                <th>Quantity</th>
+                <td>{{ bill.quantity }}</td>
+            </tr>
+            <tr>
+                <th>Total (INR)</th>
+                <td class="total">{{ "%.2f"|format(bill.total) }}</td>
+            </tr>
+        </table>
+
+        <a href="/">Back to Pharmacy</a>
+    </section>
 </body>
 </html>
