@@ -17,7 +17,7 @@ spec:
     spec:
       containers:
         - name: pharmacy
-          image: YOUR_DOCKERHUB_USERNAME/pharmacy-system:v1
+          image: siddharthvr7/pharmacy-system:v1
           imagePullPolicy: Always
           ports:
             - containerPort: 5000
