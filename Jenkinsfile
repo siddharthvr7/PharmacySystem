@@ -6,6 +6,13 @@ pipeline {
         timestamps()
     }
 
+    environment {
+        PYTHON_EXE = 'C:\\Users\\siddh\\AppData\\Local\\Programs\\Python\\Python313\\python.exe'
+        DOCKER_EXE = 'C:\\Users\\siddh\\AppData\\Local\\Programs\\DockerDesktop\\resources\\bin\\docker.exe'
+        KUBECTL_EXE = 'C:\\Users\\siddh\\AppData\\Local\\Programs\\DockerDesktop\\resources\\bin\\kubectl.exe'
+        KUBECONFIG = 'C:\\Users\\siddh\\.kube\\config'
+    }
+
     stages {
         stage('Validate Version Branch') {
             steps {
@@ -23,13 +30,13 @@ pipeline {
 
         stage('Install Dependencies') {
             steps {
-                bat 'python -m pip install -r requirements.txt'
+                bat '"%PYTHON_EXE%" -m pip install -r requirements.txt'
             }
         }
 
         stage('Run Tests') {
             steps {
-                bat 'python -m pytest -v'
+                bat '"%PYTHON_EXE%" -m pytest -v'
             }
         }
 
@@ -47,30 +54,22 @@ pipeline {
                             "${env.DOCKERHUB_USER}/pharmacy-system:${env.IMAGE_TAG}"
                     }
 
-                    bat 'powershell -NoProfile -Command "$env:DOCKERHUB_TOKEN | docker login -u $env:DOCKERHUB_USER --password-stdin"'
-                    
-                    bat 'docker build -t %IMAGE_NAME% .'
-                    bat 'docker push %IMAGE_NAME%'
-                    bat 'docker logout'
+                    bat 'powershell -NoProfile -ExecutionPolicy Bypass -Command "$env:DOCKERHUB_TOKEN | & $env:DOCKER_EXE login -u $env:DOCKERHUB_USER --password-stdin"'
+
+                    bat '"%DOCKER_EXE%" build -t %IMAGE_NAME% .'
+                    bat '"%DOCKER_EXE%" push %IMAGE_NAME%'
+                    bat '"%DOCKER_EXE%" logout'
                 }
             }
         }
 
         stage('Deploy to Kubernetes') {
             steps {
-                withCredentials([
-                    usernamePassword(
-                        credentialsId: 'dockerhub-creds',
-                        usernameVariable: 'DOCKERHUB_USER',
-                        passwordVariable: 'DOCKERHUB_TOKEN'
-                    )
-                ]) {
-                    bat 'kubectl apply -f k8s/%IMAGE_TAG%-deployment.yaml'
-                    bat 'kubectl apply -f k8s/%IMAGE_TAG%-service.yaml'
+                bat '"%KUBECTL_EXE%" apply -f k8s/%IMAGE_TAG%-deployment.yaml'
+                bat '"%KUBECTL_EXE%" apply -f k8s/%IMAGE_TAG%-service.yaml'
 
-                    bat 'kubectl set image deployment/pharmacy-%IMAGE_TAG% pharmacy=%DOCKERHUB_USER%/pharmacy-system:%IMAGE_TAG%'
-                    bat 'kubectl rollout status deployment/pharmacy-%IMAGE_TAG% --timeout=180s'
-                }
+                bat '"%KUBECTL_EXE%" set image deployment/pharmacy-%IMAGE_TAG% pharmacy=siddharthvr7/pharmacy-system:%IMAGE_TAG%'
+                bat '"%KUBECTL_EXE%" rollout status deployment/pharmacy-%IMAGE_TAG% --timeout=180s'
             }
         }
     }
@@ -80,7 +79,7 @@ pipeline {
             echo "Pharmacy ${env.IMAGE_TAG} pipeline completed successfully."
         }
         failure {
-            echo "Pipeline failed. Check the stage logs."
+            echo 'Pipeline failed. Check the stage logs.'
         }
     }
 }
