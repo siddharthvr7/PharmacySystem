@@ -4,10 +4,8 @@ from threading import Lock
 
 app = Flask(__name__)
 
-# Version 1: data is stored in memory.
+# Version 1: Add Items only. Data is stored in memory.
 medicines = {}
-bills = []
-next_bill_id = 1
 data_lock = Lock()
 
 
@@ -17,13 +15,8 @@ def index():
         medicine_list = {
             name: item.copy() for name, item in medicines.items()
         }
-        bill_list = [item.copy() for item in bills]
 
-    return render_template(
-        "index.html",
-        medicines=medicine_list,
-        bills=bill_list
-    )
+    return render_template("index.html", medicines=medicine_list)
 
 
 @app.route("/add", methods=["POST"])
@@ -50,61 +43,6 @@ def add_medicine():
             }
 
     return redirect(url_for("index"))
-
-
-@app.route("/bill", methods=["POST"])
-def generate_bill():
-    global next_bill_id
-
-    name = request.form.get("name", "").strip()
-
-    try:
-        quantity = int(request.form.get("quantity", ""))
-    except (ValueError, TypeError):
-        abort(400, description="Invalid quantity.")
-
-    if quantity <= 0:
-        abort(400, description="Quantity must be positive.")
-
-    with data_lock:
-        if name not in medicines:
-            abort(400, description="Medicine not found.")
-
-        medicine = medicines[name]
-
-        if quantity > medicine["stock"]:
-            abort(400, description="Insufficient stock.")
-
-        total = round(medicine["price"] * quantity, 2)
-        medicine["stock"] -= quantity
-
-        bill = {
-            "id": next_bill_id,
-            "medicine": name,
-            "quantity": quantity,
-            "unit_price": medicine["price"],
-            "total": total
-        }
-
-        bills.append(bill)
-        next_bill_id += 1
-        bill_id = bill["id"]
-
-    return redirect(url_for("view_bill", bill_id=bill_id))
-
-
-@app.route("/bills/<int:bill_id>")
-def view_bill(bill_id):
-    with data_lock:
-        bill = next(
-            (item.copy() for item in bills if item["id"] == bill_id),
-            None
-        )
-
-    if bill is None:
-        abort(404)
-
-    return render_template("bill.html", bill=bill)
 
 
 @app.route("/health")

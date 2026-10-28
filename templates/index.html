@@ -21,7 +21,7 @@
             margin: 20px 0;
             border-radius: 10px;
         }
-        input, select, button {
+        input, button {
             padding: 10px;
             margin: 5px 2px;
         }
@@ -38,12 +38,11 @@
             text-align: left;
             border-bottom: 1px solid #ddd;
         }
-        a { color: #175bb5; }
     </style>
 </head>
 <body>
     <h1>Pharmacy Management System</h1>
-    <p>Version 1 | Medicine Inventory and Billing</p>
+    <p>Version 1 | Medicine Inventory</p>
 
     <section>
         <h2>Add Medicine</h2>
@@ -61,7 +60,11 @@
         <h2>Available Medicines</h2>
         {% if medicines %}
         <table>
-            <tr><th>Medicine</th><th>Price</th><th>Stock</th></tr>
+            <tr>
+                <th>Medicine</th>
+                <th>Price</th>
+                <th>Stock</th>
+            </tr>
             {% for name, item in medicines.items() %}
             <tr>
                 <td>{{ name }}</td>
@@ -72,43 +75,6 @@
         </table>
         {% else %}
         <p>No medicines added yet.</p>
-        {% endif %}
-    </section>
-
-    <section>
-        <h2>Generate Bill</h2>
-        {% if medicines %}
-        <form action="/bill" method="post">
-            <select name="name" required>
-                {% for name in medicines %}
-                <option value="{{ name }}">{{ name }}</option>
-                {% endfor %}
-            </select>
-            <input name="quantity" type="number" min="1"
-                   placeholder="Quantity" required>
-            <button type="submit">Generate Bill</button>
-        </form>
-        {% else %}
-        <p>Add a medicine before generating a bill.</p>
-        {% endif %}
-    </section>
-
-    <section>
-        <h2>Bill History</h2>
-        {% if bills %}
-        <table>
-            <tr><th>Bill ID</th><th>Medicine</th><th>Total</th><th>Details</th></tr>
-            {% for bill in bills %}
-            <tr>
-                <td>{{ bill.id }}</td>
-                <td>{{ bill.medicine }}</td>
-                <td>₹{{ "%.2f"|format(bill.total) }}</td>
-                <td><a href="/bills/{{ bill.id }}">View Bill</a></td>
-            </tr>
-            {% endfor %}
-        </table>
-        {% else %}
-        <p>No bills generated yet.</p>
         {% endif %}
     </section>
 </body>
