@@ -47,7 +47,6 @@ pipeline {
                             "${env.DOCKERHUB_USER}/pharmacy-system:${env.IMAGE_TAG}"
                     }
 
-                    bat 'docker login -u "%DOCKERHUB_USER%" --password-stdin < nul'
                     bat 'powershell -NoProfile -Command "$env:DOCKERHUB_TOKEN | docker login -u $env:DOCKERHUB_USER --password-stdin"'
                     
                     bat 'docker build -t %IMAGE_NAME% .'
